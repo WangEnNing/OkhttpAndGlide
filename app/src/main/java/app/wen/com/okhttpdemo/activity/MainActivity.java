@@ -91,8 +91,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.send_pic:
                 l_time = System.currentTimeMillis();
                 String Str_time = Long.toString(l_time);
-                start_okhttp(Str_time);
-                start_asyn(Str_time);
+                if (filePath != null) {
+                    start_okhttp(Str_time);
+                    start_asyn(Str_time);
+                } else {
+                    Toast.makeText(MainActivity.this, "请选择照片", Toast.LENGTH_LONG).show();
+                }
                 break;
             case R.id.glide_but:
                 Intent i = new Intent();
@@ -104,40 +108,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void start_okhttp(String str_time) {
-        if (filePath != null) {
-            File file = new File(filePath);
-            try {
-                FileInputStream fis = new FileInputStream(file);
-                int data = fis.available();
-                Log.e("111", "data 文件大小" + data);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                HttpManager.postAsyn2(url, new HttpManager.StringCallback() {
-                    @Override
-                    public void onFailure(Request request, IOException e) {
-                        Log.e("111", "222==上传失败" + request.toString());
-                    }
 
-                    @Override
-                    public void onResponse(String response) {
-                        Long time1 = System.currentTimeMillis();
-                        long time_cha = time1 - l_time;
-                        Log.e("111", "okhttp222时间差" + time_cha);
-                        Log.e("111", "222==上传成功" + response);
-
-                    }
-                }, file, "test1", new HttpManager.Param("time", str_time));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            Toast.makeText(MainActivity.this, "请选择照片", Toast.LENGTH_LONG).show();
+        File file = new File(filePath);
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            int data = fis.available();
+            Log.e("111", "data 文件大小" + data);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        try {
+            HttpManager.postAsyn2(url, new HttpManager.StringCallback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    Log.e("111", "222==上传失败" + request.toString());
+                }
+
+                @Override
+                public void onResponse(String response) {
+                    Long time1 = System.currentTimeMillis();
+                    long time_cha = time1 - l_time;
+                    Log.e("111", "okhttp222时间差" + time_cha);
+                    Log.e("111", "222==上传成功" + response);
+
+                }
+            }, file, "test1", new HttpManager.Param("time", str_time));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 
